@@ -6,7 +6,9 @@ const jwt = require('jsonwebtoken')
 class UserController{
     async registration(req, res){
         try {
-            const {email, login, password} = req.body
+            const {email, password} = req.body
+
+            console.log(req.body)
 
             const candidate = await User.findOne({email})
 
@@ -14,8 +16,8 @@ class UserController{
 
             const hashPassword = await bcrypt.hash(password, 10)
             
-            const user = new User({email, password: hashPassword, login})
-            console.log(user)
+            const user = new User({email, password: hashPassword})
+            
 
             await user.save()
 
@@ -23,15 +25,15 @@ class UserController{
 
         } catch (e) {
             console.log(e)
-            res.send({message: "Server error"})
+            res.json({message: e})
         }
     }
 
     async login(req, res){
         try {
-            const {login, password} = req.body
+            const {email, password} = req.body
 
-            const user = await User.findOne({login})
+            const user = await User.findOne({email})
 
             if(!user) return res.status(400).json({message: 'User not found'})
 
@@ -62,6 +64,16 @@ class UserController{
             
             return res.status(400).json({message: 'Auth error'})
             
+        }
+    }
+
+    async remove(req, res){
+        try {
+            const user = await User.findOne({_id: req.params.id})
+            await user.delete()
+            res.json({message: `User with id ${req.params.id} was deleted`})
+        } catch (error) {
+            res.status(404).json({message: 'Server error'})
         }
     }
 }
