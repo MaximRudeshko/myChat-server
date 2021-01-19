@@ -5,6 +5,8 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const userRouter = require('./routes/user.route')
 const dialogsRouter = require('./routes/dialogs.route')
+const messagesRouter = require('./routes/messagesRouter')
+const updateLastSeen = require('./midllewares/updateLastSeen')
 const dbURL = 'mongodb+srv://maxim:147741@cluster0.l0u0c.mongodb.net/chat?retryWrites=true&w=majority'
 
 
@@ -12,8 +14,10 @@ const dbURL = 'mongodb+srv://maxim:147741@cluster0.l0u0c.mongodb.net/chat?retryW
 
 app.use(cors())
 app.use(express.json()) 
+app.use(updateLastSeen)
 app.use('/api/user', userRouter)
 app.use('/api/dialogs', dialogsRouter)
+app.use('/api/messages', messagesRouter)
 
 const start = async () => {
 

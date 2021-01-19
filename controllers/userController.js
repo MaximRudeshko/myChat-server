@@ -1,11 +1,15 @@
 const User = require('../models/User')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
+const {validationResult} = require('express-validator')
 
 class UserController{
     async registration(req, res){
         try {
+            const errors = validationResult(req)
+            if(!errors.isEmpty()){
+                return res.status(400).json({errors: errors.array(), message: "Validation error"});
+            }
             const {email, password} = req.body
 
             console.log(req.body)
