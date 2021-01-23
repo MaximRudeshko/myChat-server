@@ -10,9 +10,7 @@ class UserController{
             if(!errors.isEmpty()){
                 return res.status(400).json({errors: errors.array(), message: "Validation error"});
             }
-            const {email, password} = req.body
-
-            console.log(req.body)
+            const {email, password, userName} = req.body
 
             const candidate = await User.findOne({email})
 
@@ -20,7 +18,7 @@ class UserController{
 
             const hashPassword = await bcrypt.hash(password, 10)
             
-            const user = new User({email, password: hashPassword})
+            const user = new User({email, password: hashPassword, userName})
             
 
             await user.save()
