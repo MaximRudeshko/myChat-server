@@ -1,15 +1,14 @@
 const Dialog = require("../models/Dialog")
+const Message = require("../models/Message")
 
 
 class DialogsController{
     fetchDialogs(io){
         try {
             return async function (req, res){
-                
                 const dialogs = await Dialog
                     .find({$or : [{owner: req.params.id}, {interlocutor: req.params.id}]})
                     .populate(['owner', 'interlocutor'])
-                io.emit('FETCH_DIALOGS', dialogs)
                 res.json(dialogs)
         }
         } catch (error) {

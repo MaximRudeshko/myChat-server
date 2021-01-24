@@ -12,22 +12,37 @@ class messageController{
         }
     }
 
-     async create (req, res)  {
-       
-        const {dialog, text, user} = req.body
-        console.log(dialog)
-        await Dialog.findByIdAndUpdate(dialog, {lastMessageTime : new Date(), lastMessage: text})
-        
-        
-        const messageData = {
-            text,
-            dialog,
-            user
-        }
-        const message = new Message(messageData)
-        await message.save()
+    create (io)  {
+        return async (req, res) => {
+            try {
+                const {dialog, text, user} = req.body
+                console.log(dialog)
+                await Dialog.findByIdAndUpdate(dialog, {lastMessageTime : new Date(), lastMessage: text})
+                   
+                const messageData = {
+                    text,
+                    dialog,
+                    user
+                }
 
-        res.json(message)
+                const message = new Message(messageData)
+                await message.save()
+                message.populate(
+                    ['user'],
+                    (e, msg) => {
+                        if(e){
+                            res.json({message: "error"})
+                        }
+                        res.json(msg)
+                        io.emit('NEW_MESSAGE', msg)
+                    }
+                )    
+                
+            } catch (error) {
+                console.log(error)
+                res.status(400).json({message: 'Message send error'})
+            }
+        }
         
     }
 }

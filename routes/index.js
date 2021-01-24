@@ -17,6 +17,7 @@ const createRouters = (app, io) => {
     app.use(cors())
     app.use(express.json()) 
     app.use(updateLastSeen)
+
     //Dialogs routes
     dialogsRouter.get('/:id', dialogsController.fetchDialogs(io)) 
     dialogsRouter.post('/create', dialogsController.create(io)) 
@@ -25,7 +26,7 @@ const createRouters = (app, io) => {
     //Message routes
 
     messagesRouter.get('/:id', messageController.fetchMessages)
-    messagesRouter.post('/create', messageController.create)
+    messagesRouter.post('/create', messageController.create(io))
 
     //User routes
 
@@ -37,8 +38,6 @@ const createRouters = (app, io) => {
     app.use('/api/user', userRouter)
     app.use('/api/dialogs', dialogsRouter)
     app.use('/api/messages', messagesRouter)
-
-    
 }
 
 module.exports = createRouters
